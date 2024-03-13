@@ -20,16 +20,30 @@ func main() {
 	filename := args[0]
 
 	// Open supplied filename
-	file, err := os.ReadFile(filename)
+	file := readFile(filename)
+
+	freqAnalysis(string(file))
+}
+
+// Return file as bytes with given file path as a string
+func readFile(filepath string) []byte {
+	file, err := os.ReadFile(filepath)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	freqMap := make(map[string]int)
+	return file
+}
 
+// Takes in a string and performs a letter-based frequency analysis
+// and prints out in descending order
+func freqAnalysis(content string) {
+
+	freqMap := make(map[string]int)
 	matcher, _ := regexp.CompilePOSIX("[a-zA-Z]")
-	for pos, char := range string(file) {
+
+	for pos, char := range content {
 		_ = pos
 		token := strings.ToLower(string(char))
 		isChar := matcher.MatchString(token)
@@ -51,4 +65,5 @@ func main() {
 	for _, k := range keys {
 		fmt.Println(k, freqMap[k])
 	}
+
 }
