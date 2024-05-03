@@ -5,31 +5,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/TanglingTreats/go-cryptography-exp/contxt"
 	crypt "github.com/TanglingTreats/go-cryptography-exp/crypto"
+	"github.com/TanglingTreats/go-cryptography-exp/interfaces"
 	iofile "github.com/TanglingTreats/go-cryptography-exp/io"
 )
-
-type Player interface {
-	KickBall() int
-}
-
-type FootballPlayer struct {
-	speed   int
-	stamina int
-}
-
-func (fp FootballPlayer) KickBall() int {
-	return fp.speed * fp.stamina
-}
 
 func main() {
 	argsNum := len(os.Args)
 
 	mode := flag.String("mode", "encrypt", "The mode to run the program in")
+	flag.Parse()
 
 	switch *mode {
 	case "encrypt":
-		fmt.Println(argsNum)
 		if argsNum > 4 || argsNum <= 3 {
 			fmt.Println("Only expecting one argument as a filename.")
 			os.Exit(1)
@@ -37,7 +26,10 @@ func main() {
 		args := os.Args[3:]
 		filename := args[0]
 		cryptoFun(filename)
-
+	case "interface":
+		interfaces.Exec()
+	case "context":
+		contxt.Exec()
 	}
 
 }
