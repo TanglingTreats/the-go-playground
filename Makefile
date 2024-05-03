@@ -2,7 +2,7 @@ build:
 	@go build -o playground
 
 crypto: build
-	@./playground test.txt
+	@./playground --mode encrypt test.txt
 
 run: build
 	@./playground
