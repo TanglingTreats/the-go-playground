@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/rand"
 	"encoding/binary"
 	"flag"
 	"fmt"
@@ -189,14 +188,28 @@ func ASN1Encoding() {
 
 	const size = 256
 
-	egData := make([]byte, size)
-	_, err := rand.Read(egData)
+	// egData := make([]byte, size)
+	// _, err := rand.Read(egData)
 
-	if err != nil {
-		fmt.Println("Unable to generate random data")
+	// if err != nil {
+	// fmt.Println("Unable to generate random data")
+	// }
+
+	// curSize := encodeASN1(egData, OCTET_STR, &buf)
+	intArr := []int{2, 4}
+	curSize := 0
+	for _, data := range intArr {
+		intBuf := new(bytes.Buffer)
+		writeAsByteSlice(intBuf, data)
+		curSize += encodeASN1(intBuf.Bytes(), INTEGER, &buf)
 	}
 
-	curSize := encodeASN1(egData, OCTET_STR, &buf)
+	// Create new slice and copy data over
+	data := make([]byte, curSize)
+	copy(data, buf.Bytes())
+	buf.Reset() // Reset existing buffer
+
+	curSize = encodeASN1(data, SEQ, &buf)
 
 	fmt.Printf("Current size: %d\n", curSize)
 	fmt.Printf("%#v\n", buf.Bytes())
@@ -247,6 +260,7 @@ func encodeASN1(data []byte, asnType ASN1_Types, buf *bytes.Buffer) int {
 
 			size += 2 + numOfBytes + dataLen // Tag, Size of Len, Len, Len of Data
 		}
+
 	case SEQ:
 		fmt.Println("Encoding a SEQUENCE")
 		buf.Write([]byte{0x30, byte(dataLen)})
